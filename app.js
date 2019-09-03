@@ -47,4 +47,4 @@ app.use((error, req, res, next) => {                      // general error handl
     res.status(status).json({ message: message, data: data });
 });
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
