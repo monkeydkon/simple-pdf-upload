@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 
 const pdfRoutes = require('./routes/pdf')
-
+const upload = multer({dest: './uploads'});
 const app = express();
 
 const fileStorage = multer.diskStorage({                         // to store images
@@ -26,8 +26,10 @@ const fileFilter = (req, file, cb) => {
 };
 
 app.use(bodyParser.json());
-app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('upload'));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));     // finds absolute path to uploads directory
+// app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('upload'));
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));     // finds absolute path to uploads directory
+
+
 
 
 app.use((req, res, next) => {
@@ -37,7 +39,22 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/pdf', pdfRoutes);
+//app.use('/pdf', pdfRoutes);
+
+app.post('/upload',multer({storage: fileStorage, fileFilter: fileFilter}).single('upload'), (req, res, next) => {
+    let filename;
+    let uploadStatus;
+    if(req.file){
+        console.log('uploading...');
+        filename = req.file.filename;
+        uploadStatus = 'File Uploaded Successfully';
+    }else{
+        console.log('No File Uploaded');
+        filename = 'File Not Uploaded';
+        uploadStatus = 'File Upload Failed';
+    }
+    res.json({status:uploadStatus, filename: filename});
+});
 
 app.use((error, req, res, next) => {                      // general error handling middleware
     console.log(error);
