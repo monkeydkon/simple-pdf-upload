@@ -1,11 +1,7 @@
-const path = require('path');
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 
-const pdfRoutes = require('./routes/pdf')
-const upload = multer({dest: './uploads'});
 const app = express();
 
 const fileStorage = multer.diskStorage({                         // to store images
@@ -26,11 +22,6 @@ const fileFilter = (req, file, cb) => {
 };
 
 app.use(bodyParser.json());
-// app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('upload'));
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));     // finds absolute path to uploads directory
-
-
-
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -39,7 +30,6 @@ app.use((req, res, next) => {
     next();
 });
 
-//app.use('/pdf', pdfRoutes);
 
 app.post('/upload',multer({storage: fileStorage, fileFilter: fileFilter}).single('upload'), (req, res, next) => {
     let filename;
